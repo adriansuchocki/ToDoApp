@@ -15,7 +15,47 @@
   <body>
 
     <div class="container">
-        <h1>Hello, world!</h1>
+      <div class="row justify-content-md-center">
+        <div class="col-md-auto">
+          <h1>ToDo App</h1>
+        </div>
+      </div>
+      <div class="row">
+        <div id="colTaskName" class="col justify-content-md-end">Task name:
+          <input id="taskName" type="text" class="form-control" onkeypress="checkValidation()" placeholder="Minimum 3 characters" required/>
+        </div>
+        <div class="col-2"></div>
+        <div class="col pt-3">
+          <div class="row">
+            <button class="btn btn-primary" onclick="addTask()">
+              Add task <span class="fui-plus"></span>
+            </button>
+          </div>
+        </div>
+        <div class="col-2">
+          <div class="row">
+            Priority:
+          </div>
+          <div >
+            <select id="taskPriority" class="form-control select-primary select-block mbl">
+              <option value="0" selected>High</option>
+              <option value="1">Mid</option>
+              <option value="2">Low</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <table id="toDoTable" class="table table-striped" cellspacing="0" width="100%">
+        <thead>
+        <tr>
+          <th id="taskNameCol" scope="col">Task name </th>
+          <th id="taskPriorityCol" scope="col">Priority</th>
+          <th scope="col"></th>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
@@ -27,6 +67,8 @@
     <script src="http://vjs.zencdn.net/6.6.3/video.js"></script>
 
     <script src="scripts/flat-ui.js"></script>
+
+    <script src="scripts/to-do.js"></script>
 
   </body>
 </html>
