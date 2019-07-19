@@ -137,7 +137,7 @@ tableOperation.importFile = function(){
     reader.onload = function (event) {
       var object = JSON.parse(event.target.result);
       for (var task in object) {
-        taskMenu.addTaskToTable(task, object[task]);
+        taskMenu.addTaskToTable(task, object[task], function(){});
       }
     }
   }
