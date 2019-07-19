@@ -15,47 +15,93 @@
   <body>
 
     <div class="container">
-      <div class="row justify-content-md-center">
-        <div class="col-md-auto">
-          <h1>ToDo App</h1>
+      <taskform>
+        <div class="row justify-content-md-center">
+          <div class="col-md-auto">
+            <h1>ToDo App</h1>
+          </div>
         </div>
-      </div>
-      <div class="row">
-        <div id="colTaskName" class="col justify-content-md-end">Task name:
-          <input id="taskName" type="text" class="form-control" onkeypress="checkValidation()" placeholder="Minimum 3 characters" required/>
+        <div class="row">
+          <div id="colTaskName" class="col justify-content-md-end">Task name:
+            <input id="taskName" type="text" class="form-control" onkeypress="taskMenu.checkValidation()" placeholder="Minimum 3 characters" required/>
+          </div>
+          <div class="col-2"></div>
+          <div class="col pt-3">
+            <div class="row">
+              <button class="btn btn-primary" onclick="taskMenu.addTask()">
+                Add task <span class="fui-plus"></span>
+              </button>
+            </div>
+          </div>
+          <div class="col-2">
+            <div class="row">
+              Priority:
+            </div>
+            <div >
+              <select id="taskPriority" class="form-control select-primary select-block mbl">
+                <option value="0" selected>High</option>
+                <option value="1">Mid</option>
+                <option value="2">Low</option>
+              </select>
+            </div>
+          </div>
         </div>
-        <div class="col-2"></div>
-        <div class="col pt-3">
-          <div class="row">
-            <button class="btn btn-primary" onclick="addTask()">
-              Add task <span class="fui-plus"></span>
+        <div class="row">
+          <div class="col-2">
+            Add task from list with <b>Low</b> level
+          </div>
+          <div class="col-2">
+            <select id="externalTaskList" class="form-control select-primary select-block mbl">
+            </select>
+          </div>
+          <div class="col-6">
+            <div class="row">
+              <button class="btn btn-primary" onclick="taskMenu.addTaskFromList()">
+                <span class="fui-plus"></span>
+              </button>
+            </div></div>
+          <div class="col-1">
+            <button class="btn btn-primary" onclick="tableOperation.clearTable()">
+              Clear table <span class="fui-cross"></span>
             </button>
           </div>
         </div>
-        <div class="col-2">
-          <div class="row">
-            Priority:
+      </taskform>
+      <task>
+        <table id="toDoTable" class="table table-striped" cellspacing="0" width="100%">
+          <thead>
+          <tr>
+            <th id="taskNameCol" scope="col" onclick="tableOperation.clickOnSort(0, 'taskNameCol', 'taskPriorityCol')">Task name <span class="fui-triangle-right-large"></span></th>
+            <th id="taskPriorityCol" scope="col" onclick="tableOperation.clickOnSort(1, 'taskPriorityCol', 'taskNameCol')">Priority <span class="fui-triangle-right-large"></span></th>
+            <th scope="col"></th>
+          </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </task>
+      <files>
+        <div class="row">
+          <div class="col-2">
           </div>
-          <div >
-            <select id="taskPriority" class="form-control select-primary select-block mbl">
-              <option value="0" selected>High</option>
-              <option value="1">Mid</option>
-              <option value="2">Low</option>
-            </select>
+          <div class="col-1 mr-4">
+            <button class="btn btn-primary" onclick="tableOperation.importFile()">
+              Import file
+            </button>
+          </div>
+          <div class="col-4 pt-1">
+            <div class="custom-file">
+              <input type="file" class="custom-file-input" id="importFile" onchange="tableOperation.setPath(this)">
+              <label class="custom-file-label" for="importFile" id="uploadLabel">Choose file</label>
+            </div>
+          </div>
+          <div class="col-1">
+            <button class="btn btn-primary" onclick="tableOperation.exportToFile()">
+              Export to file
+            </button>
           </div>
         </div>
-      </div>
-      <table id="toDoTable" class="table table-striped" cellspacing="0" width="100%">
-        <thead>
-        <tr>
-          <th id="taskNameCol" scope="col">Task name </th>
-          <th id="taskPriorityCol" scope="col">Priority</th>
-          <th scope="col"></th>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
+      </files>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->

@@ -1,75 +1,104 @@
-var taskNameVal = "";
-var taskPriorityVal = "";
-var rowClassColor = "";
-var rowTable = "";
-const sortSpan = "<span class=\"fui-triangle-up-small\"></span>";
+var taskNameVal = '';
+var taskPriorityVal = '';
+var rowClassColor = '';
+var rowTable = '';
+var selectOpition = '';
+const ROW_DANGER = 'table-danger';
+const ROW_WARNING = 'table-warning';
+const ROW_SUCCESS = 'table-success';
+const SORT_ASC = 'fui-triangle-up-small';
+const SORT_DESC = 'fui-triangle-down-small';
+const SORT_SPAN = 'fui-triangle-right-large';
+const DEFAULT_PRIORITY = 'Low';
 
 $( document ).ready(function() {
   for (var i = 0; i < localStorage.length; i++) {
     taskNameVal = localStorage.key(i);
     taskPriorityVal = localStorage.getItem(taskNameVal);
-    switch(taskPriorityVal){
-      case 'High':
-        rowClassColor = "table-danger";
-        break;
-      case 'Mid':
-        rowClassColor = "table-warning";
-        break;
-      case 'Low':
-        rowClassColor = "table-success";
-        break;
-    }
-    rowTable = "<tr class='" + rowClassColor + "'><td>" + taskNameVal + "</td><td>" + taskPriorityVal + "</td><td scope=\"row\"><button type=\"button\" class=\"btn btn-block btn-sm btn-default\" >Delete</button></td></tr>";
-    $('tbody').append(rowTable);
+    tableOperation.addRowToTable(taskNameVal, taskPriorityVal);
   }
+  $.get( "https://my-json-server.typicode.com/typicode/demo/comments", function( data ) {
+    for(var task in data){
+      selectOpition = '<option>'+data[task].id+'</option>'
+      $('#externalTaskList').append(selectOpition);
+    }
+  });
 });
 
-function addTask() {
-  if (checkValidation()) {
-    taskNameVal = $("#taskName").val();
-    taskPriorityVal = $("#taskPriority option:selected").text();
-    if (localStorage.getItem(taskNameVal) == null) {
-      localStorage.setItem(taskNameVal, taskPriorityVal);
-      switch(taskPriorityVal){
-        case 'High':
-          rowClassColor = "table-danger";
-          break;
-        case 'Mid':
-          rowClassColor = "table-warning";
-          break;
-        case 'Low':
-          rowClassColor = "table-success";
-          break;
-      }
-      rowTable = "<tr class='" + rowClassColor + "'><td>" + taskNameVal + "</td><td>" + taskPriorityVal + "</td><td scope=\"row\"><button type=\"button\" class=\"btn btn-block btn-sm btn-default\" >Delete</button></td></tr>";
-      $('tbody').append(rowTable);
-    } else {
-      alert('Task exist');
-    }
+var taskMenu = {};
+
+taskMenu.addTask = function() {
+  if (taskMenu.checkValidation()) {
+    taskNameVal = $('#taskName').val();
+    taskPriorityVal = $('#taskPriority option:selected').text();
+    taskMenu.addTaskToTable(taskNameVal, taskPriorityVal, taskMenu.addTaskSuccessfully);
   }
 }
 
-function checkValidation(){
-  const taskValue = $("#taskName").val();
-  const errorTaskName = "<div class=\"form-error col-sm\"><small class=\"text-danger\">Must be minimum 3 characters.</small></div>";
-  $("#taskName").removeClass('is-invalid');
+taskMenu.addTaskFromList = function(){
+  taskNameVal = $('#externalTaskList option:selected').text();
+  taskMenu.addTaskToTable(taskNameVal, DEFAULT_PRIORITY, taskMenu.addTaskSuccessfully);
+}
+
+taskMenu.addTaskToTable = function(taskName, taskPriority, callback){
+  if (localStorage.getItem(taskName) == null) {
+    localStorage.setItem(taskName, taskPriority);
+    tableOperation.addRowToTable(taskName, taskPriority);
+    callback();
+  } else {
+    alert('Task ' + taskName + ' exist');
+  }
+}
+
+taskMenu.addTaskSuccessfully = function(){
+  alert('Task added successfully');
+}
+
+taskMenu.checkValidation = function(){
+  const taskValue = $('#taskName').val();
+  const errorTaskName = '<div class="form-error col-sm"><small class="text-danger">Must be minimum 3 characters.</small></div>';
+  $('#taskName').removeClass('is-invalid');
   $('.form-error').remove();
   if(taskValue.length < 3){
-    $("#taskName").addClass('is-invalid');
-    $("#colTaskName").append(errorTaskName);
+    $('#taskName').addClass('is-invalid');
+    $('#colTaskName').append(errorTaskName);
     return false;
   }
   return true;
 }
 
-$('.table tbody').on('click', '.btn', function(){
-  let currow = $(this).closest('tr');
-  let taskNameVal = currow.find('td:eq(0)').text();
-  currow.remove();
-  localStorage.removeItem(taskNameVal);
-})
+var tableOperation = {};
 
-function sortTable(column, type) {
+tableOperation.addRowToTable = function(taskName, priority){
+  switch(priority){
+    case 'High':
+      rowClassColor = ROW_DANGER;
+      break;
+    case 'Mid':
+      rowClassColor = ROW_WARNING;
+      break;
+    case 'Low':
+      rowClassColor = ROW_SUCCESS;
+      break;
+  }
+  rowTable = '<tr class="' + rowClassColor + '"><td>' + taskName + '</td><td>' + priority + '</td><td scope="row"><button type="button" class="btn btn-block btn-sm btn-default" onclick="tableOperation.deleteRow(this)">Delete</button></td></tr>';
+  $('tbody').append(rowTable);
+}
+
+tableOperation.deleteRow = function(objButton){
+  let rowToDelete = objButton.parentNode.parentNode;
+  let taskNameVal = rowToDelete.firstChild.firstChild.nodeValue;
+  localStorage.removeItem(taskNameVal);
+  rowToDelete.remove();
+
+}
+
+tableOperation.clearTable = function(){
+  $('.table tbody').empty();
+  localStorage.clear();
+}
+
+tableOperation.sortTable = function(column, type) {
 
   var order = $('.table thead tr>th:eq(' + column + ')').data('order');
   order = order === 'ASC' ? 'DESC' : 'ASC';
@@ -84,35 +113,56 @@ function sortTable(column, type) {
   }).appendTo('.table tbody');
 }
 
-$('#taskNameCol').click(function() {
-  sortTable(0, 'text');
-  if($('#taskNameCol').has('span').length == 0) {
-    $("#taskNameCol").append(sortSpan);
+tableOperation.clickOnSort = function(indexColumn, columnNameToSort, columnName){
+  tableOperation.sortTable(indexColumn, 'text');
+  let sortClass = $('#'+columnNameToSort + ' > span');
+  if (sortClass.attr('class') == SORT_DESC) {
+    sortClass.removeClass();
+    sortClass.addClass(SORT_ASC);
   } else {
-    let sortClass = $('#taskNameCol > span');
-    if (sortClass.attr('class') == 'fui-triangle-down-small') {
-      sortClass.removeClass();
-      sortClass.addClass('fui-triangle-up-small');
-    } else {
-      sortClass.removeClass();
-      sortClass.addClass('fui-triangle-down-small');
+    sortClass.removeClass();
+    sortClass.addClass(SORT_DESC);
+  }
+  $('#'+columnName + ' > span').removeClass();
+  $('#'+columnName + ' > span').addClass(SORT_SPAN);
+}
+
+tableOperation.importFile = function(){
+  input = $('#importFile');
+  console.log(input[0].files[0]);
+  if(typeof input[0].files[0] != "undefined" ) {
+    file = input[0].files[0];
+    var reader = new FileReader();
+    reader.readAsText(file);
+    reader.onload = function (event) {
+      var object = JSON.parse(event.target.result);
+      for (var task in object) {
+        taskMenu.addTaskToTable(task, object[task]);
+      }
     }
   }
-  $('#taskPriorityCol > span').remove();
-});
-$('#taskPriorityCol').click(function() {
-  sortTable(1, 'text');
-  if($('#taskPriorityCol').has('span').length == 0) {
-    $("#taskPriorityCol").append(sortSpan);
+}
+
+tableOperation.exportToFile = function(){
+  const generatedFile = JSON.stringify(localStorage, null, '\t');
+  const filename = 'todo.json';
+  let element = document.createElement('a');
+  element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(generatedFile));
+  element.setAttribute('download', filename);
+
+  element.style.display = 'none';
+  document.body.appendChild(element);
+
+  element.click();
+
+  document.body.removeChild(element);
+}
+
+tableOperation.setPath = function(fileUpload){
+  if(typeof fileUpload.files[0] != "undefined" ) {
+    file = fileUpload.files;
+    $('#uploadLabel').text(file[0].name);
   } else {
-    let sortClass = $('#taskPriorityCol > span');
-    if (sortClass.attr('class') == 'fui-triangle-down-small') {
-      sortClass.removeClass();
-      sortClass.addClass('fui-triangle-up-small');
-    } else {
-      sortClass.removeClass();
-      sortClass.addClass('fui-triangle-down-small');
-    }
+    $('#uploadLabel').text('Choose file');
   }
-  $('#taskNameCol > span').remove();
-});
+}
