@@ -50,6 +50,13 @@ taskMenu.addTaskToTable = function(taskName, taskPriority, callback){
   }
 }
 
+taskMenu.importTaskToTable = function(taskName, taskPriority){
+  if (localStorage.getItem(taskName) == null) {
+    localStorage.setItem(taskName, taskPriority);
+    tableOperation.addRowToTable(taskName, taskPriority);
+  }
+}
+
 taskMenu.addTaskSuccessfully = function(){
   alert('Task added successfully');
 }
@@ -127,17 +134,18 @@ tableOperation.clickOnSort = function(indexColumn, columnNameToSort, columnName)
   $('#'+columnName + ' > span').addClass(SORT_SPAN);
 }
 
-tableOperation.importFile = function(){
-  input = $('#importFile');
-  console.log(input[0].files[0]);
-  if(typeof input[0].files[0] != "undefined" ) {
-    file = input[0].files[0];
+tableOperation.importFile = function(fileUpload){
+  if(typeof fileUpload.files[0] != "undefined" ) {
+    if($('#checkbox')[0].checked){
+      tableOperation.clearTable();
+    }
+    file = fileUpload.files[0];
     var reader = new FileReader();
     reader.readAsText(file);
     reader.onload = function (event) {
       var object = JSON.parse(event.target.result);
       for (var task in object) {
-        taskMenu.addTaskToTable(task, object[task], function(){});
+        taskMenu.importTaskToTable(task, object[task]);
       }
     }
   }
@@ -156,13 +164,4 @@ tableOperation.exportToFile = function(){
   element.click();
 
   document.body.removeChild(element);
-}
-
-tableOperation.setPath = function(fileUpload){
-  if(typeof fileUpload.files[0] != "undefined" ) {
-    file = fileUpload.files;
-    $('#uploadLabel').text(file[0].name);
-  } else {
-    $('#uploadLabel').text('Choose file');
-  }
 }

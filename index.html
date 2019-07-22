@@ -23,7 +23,7 @@
         </div>
         <div class="row">
           <div id="colTaskName" class="col justify-content-md-end">Task name:
-            <input id="taskName" type="text" class="form-control" onkeypress="taskMenu.checkValidation()" placeholder="Minimum 3 characters" required/>
+            <input id="taskName" type="text" class="form-control" onkeyup="taskMenu.checkValidation()" placeholder="Minimum 3 characters" required/>
           </div>
           <div class="col-2"></div>
           <div class="col pt-3">
@@ -82,19 +82,20 @@
       </task>
       <files>
         <div class="row">
-          <div class="col-2">
-          </div>
-          <div class="col-1 mr-4">
-            <button class="btn btn-primary" onclick="tableOperation.importFile()">
-              Import file
-            </button>
-          </div>
-          <div class="col-4 pt-1">
+          <div class="col-4">
+            Import file:
             <div class="custom-file">
-              <input type="file" class="custom-file-input" id="importFile" onchange="tableOperation.setPath(this)">
+              <input type="file" class="custom-file-input" id="importFile" onchange="tableOperation.importFile(this)">
               <label class="custom-file-label" for="importFile" id="uploadLabel">Choose file</label>
             </div>
           </div>
+          <div class="col-2 pt-4">
+            <label class="checkbox" for="checkbox">
+              <input type="checkbox" value="" id="checkbox" data-toggle="checkbox" class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+              Override
+            </label>
+          </div>
+          <div class="col-3"></div>
           <div class="col-1">
             <button class="btn btn-primary" onclick="tableOperation.exportToFile()">
               Export to file
