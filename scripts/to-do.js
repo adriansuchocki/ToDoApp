@@ -23,6 +23,8 @@ $( document ).ready(function() {
       $('#externalTaskList').append(selectOpition);
     }
   });
+
+  $('#welcomeModal').modal('show');
 });
 
 var taskMenu = {};
@@ -92,6 +94,41 @@ tableOperation.addRowToTable = function(taskName, priority){
   $('tbody').append(rowTable);
 }
 
+tableOperation.filterResults = function(){
+  const taskFilterNameVal = $('#taskNameFilter').val();
+  const taskFilterPriorityVal = $('#taskPriorityFilter option:selected');
+  if(taskFilterNameVal.length > 2 && taskFilterPriorityVal.val() > 0){
+    tableOperation.filterRows(taskFilterNameVal, taskFilterPriorityVal.text());
+  } else if(taskFilterNameVal.length > 2){
+    tableOperation.filterRows(taskFilterNameVal, '');
+  } else if(taskFilterPriorityVal.val() > 0){
+    tableOperation.filterRows('', taskFilterPriorityVal.text());
+  } else{
+    tableOperation.filterRows('', '');
+  }
+}
+
+tableOperation.filterRows = function(taskFilterName, taskFilterPriorityVal){
+  tableOperation.clearOnlyTable();
+  for (var i = 0; i < localStorage.length; i++) {
+    taskNameVal = localStorage.key(i);
+    taskPriorityVal = localStorage.getItem(taskNameVal);
+    if ((taskNameVal.indexOf(taskFilterName) != -1) && taskFilterName != '' && (taskPriorityVal.indexOf(taskFilterPriorityVal) != -1) && taskFilterPriorityVal != ''){
+      console.log("Robie");
+      tableOperation.addRowToTable(taskNameVal, taskPriorityVal);
+    } else if((taskNameVal.indexOf(taskFilterName) != -1) && taskFilterName != '' && taskFilterPriorityVal == ''){
+      console.log("Robie2");
+      tableOperation.addRowToTable(taskNameVal, taskPriorityVal);
+    } else if((taskPriorityVal.indexOf(taskFilterPriorityVal) != -1) && taskFilterPriorityVal != '' && taskFilterName == ''){
+      console.log("Robie3");
+      tableOperation.addRowToTable(taskNameVal, taskPriorityVal);
+    } else if(taskFilterName == '' && taskFilterPriorityVal == ''){
+      console.log("Robie4");
+      tableOperation.addRowToTable(taskNameVal, taskPriorityVal);
+    }
+  }
+}
+
 tableOperation.deleteRow = function(objButton){
   let rowToDelete = objButton.parentNode.parentNode;
   let taskNameVal = rowToDelete.firstChild.firstChild.nodeValue;
@@ -103,6 +140,10 @@ tableOperation.deleteRow = function(objButton){
 tableOperation.clearTable = function(){
   $('.table tbody').empty();
   localStorage.clear();
+}
+
+tableOperation.clearOnlyTable = function(){
+  $('.table tbody').empty();
 }
 
 tableOperation.sortTable = function(column, type) {

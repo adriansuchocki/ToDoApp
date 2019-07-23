@@ -26,7 +26,8 @@
             <input id="taskName" type="text" class="form-control" onkeyup="taskMenu.checkValidation()" placeholder="Minimum 3 characters" required/>
           </div>
           <div class="col-2"></div>
-          <div class="col pt-3">
+          <div class="col">
+            <div class="row"><br/></div>
             <div class="row">
               <button class="btn btn-primary" onclick="taskMenu.addTask()">
                 Add task <span class="fui-plus"></span>
@@ -66,6 +67,24 @@
             </button>
           </div>
         </div>
+        <div class="row">Filters:</div>
+        <div class="row">
+          <div class="col-0 pt-1">Task name:</div>
+          <div class="col-3">
+            <input id="taskNameFilter" type="text" class="form-control" onkeyup="tableOperation.filterResults()" placeholder="Minimum 3 characters" required/>
+          </div>
+        </div>
+        <div class="row mt-1">
+          <div class="col-0 pt-1">Priority:</div>
+          <div class="col-0">
+            <select id="taskPriorityFilter" class="form-control select-primary select-block mbl" onchange="tableOperation.filterResults()">
+              <option value="0" selected>Select...</option>
+              <option value="1">High</option>
+              <option value="2">Mid</option>
+              <option value="3">Low</option>
+            </select>
+          </div>
+        </div>
       </taskform>
       <task>
         <table id="toDoTable" class="table table-striped" cellspacing="0" width="100%">
@@ -89,20 +108,45 @@
               <label class="custom-file-label" for="importFile" id="uploadLabel">Choose file</label>
             </div>
           </div>
-          <div class="col-2 pt-4">
-            <label class="checkbox" for="checkbox">
-              <input type="checkbox" value="" id="checkbox" data-toggle="checkbox" class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
-              Override
-            </label>
+          <div class="col-2 pt-0">
+            <div class="row"><br/></div>
+            <div class="row">
+              <label class="checkbox" for="checkbox">
+                <input type="checkbox" value="" id="checkbox" data-toggle="checkbox" class="custom-checkbox"><span class="icons"><span class="icon-unchecked"></span><span class="icon-checked"></span></span>
+                Override
+              </label>
+            </div>
           </div>
           <div class="col-3"></div>
           <div class="col-1">
-            <button class="btn btn-primary" onclick="tableOperation.exportToFile()">
-              Export to file
-            </button>
+            <div class="row"><br/></div>
+            <div class="row">
+              <button class="btn btn-primary" onclick="tableOperation.exportToFile()">
+                Export to file
+              </button>
+            </div>
           </div>
         </div>
       </files>
+    </div>
+
+    <div class="modal" id="welcomeModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">ToDo App</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Welcome on ToDo App site</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
